@@ -192,42 +192,50 @@ export const actions = {
     throw redirect(303, "/")
   },
   updateProfile: async ({ request, locals: { supabase, getSession } }) => {
-    const session = await getSession()
+    const session = await getSession();
     if (!session) {
-      throw redirect(303, "/login")
+      throw redirect(303, "/login");
     }
 
-    const formData = await request.formData()
-    const fullName = formData.get("fullName") as string
-    const companyName = formData.get("companyName") as string
-    const website = formData.get("website") as string
+    const formData = await request.formData();
+    const fullName = formData.get("fullName") as string;
+    const companyName = formData.get("companyName") as string;
+    const website = formData.get("website") as string;
+    const role = formData.get("role") as string; // New role field
 
-    let validationError
-    const fieldMaxTextLength = 50
-    const errorFields = []
+    let validationError;
+    const fieldMaxTextLength = 50;
+    const errorFields = [];
+
     if (!fullName) {
-      validationError = "Name is required"
-      errorFields.push("fullName")
+      validationError = "Name is required";
+      errorFields.push("fullName");
     } else if (fullName.length > fieldMaxTextLength) {
-      validationError = `Name must be less than ${fieldMaxTextLength} characters`
-      errorFields.push("fullName")
+      validationError = `Name must be less than ${fieldMaxTextLength} characters`;
+      errorFields.push("fullName");
     }
+
     if (!companyName) {
-      validationError =
-        "Company name is required. If this is a hobby project or personal app, please put your name."
-      errorFields.push("companyName")
+      validationError = "Company name is required. If this is a hobby project or personal app, please put your name.";
+      errorFields.push("companyName");
     } else if (companyName.length > fieldMaxTextLength) {
-      validationError = `Company name must be less than ${fieldMaxTextLength} characters`
-      errorFields.push("companyName")
+      validationError = `Company name must be less than ${fieldMaxTextLength} characters`;
+      errorFields.push("companyName");
     }
+
     if (!website) {
-      validationError =
-        "Company website is required. An app store URL is a good alternative if you don't have a website."
-      errorFields.push("website")
+      validationError = "Company website is required. An app store URL is a good alternative if you don't have a website.";
+      errorFields.push("website");
     } else if (website.length > fieldMaxTextLength) {
-      validationError = `Company website must be less than ${fieldMaxTextLength} characters`
-      errorFields.push("website")
+      validationError = `Company website must be less than ${fieldMaxTextLength} characters`;
+      errorFields.push("website");
     }
+
+    if (!role) {
+      validationError = "Role is required.";
+      errorFields.push("role");
+    }
+
     if (validationError) {
       return fail(400, {
         errorMessage: validationError,
@@ -235,16 +243,18 @@ export const actions = {
         fullName,
         companyName,
         website,
-      })
+        role
+      });
     }
 
     const { error } = await supabase.from("profiles").upsert({
-      id: session?.user.id,
+      id: session.user.id,
       full_name: fullName,
       company_name: companyName,
       website: website,
-      updated_at: new Date(),
-    })
+      role: role, // Include role in the database update
+      updated_at: new Date()
+    });
 
     if (error) {
       return fail(500, {
@@ -252,14 +262,16 @@ export const actions = {
         fullName,
         companyName,
         website,
-      })
+        role
+      });
     }
 
     return {
       fullName,
       companyName,
       website,
-    }
+      role
+    };
   },
   signout: async ({ locals: { supabase, getSession } }) => {
     const session = await getSession()

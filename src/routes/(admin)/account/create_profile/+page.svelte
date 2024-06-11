@@ -12,6 +12,7 @@
   let fullName: string = profile?.full_name ?? ""
   let companyName: string = profile?.company_name ?? ""
   let website: string = profile?.website ?? ""
+  let role: string = profile?.role ?? "manager"; // Default role
 
   const fieldError = (liveForm: FormAccountUpdateResult, name: string) => {
     let errors = liveForm?.errorFields ?? []
@@ -93,6 +94,14 @@
             value={form?.website ?? website}
             maxlength="50"
           />
+        </div>
+
+        <div class="mt-4">
+          <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+          <select id="role" name="role" bind:value={role} class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+            <option value="manager">Manager</option>
+            <option value="creator">Creator</option>
+          </select>
         </div>
 
         {#if form?.errorMessage}
