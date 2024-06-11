@@ -50,6 +50,7 @@ export interface Database {
           updated_at: string | null
           company_name: string | null
           website: string | null
+          role: string | null // Add role field here
         }
         Insert: {
           avatar_url?: string | null
@@ -58,6 +59,7 @@ export interface Database {
           updated_at?: Date | null
           company_name?: string | null
           website?: string | null
+          role?: string | null // Add role field here
         }
         Update: {
           avatar_url?: string | null
@@ -66,6 +68,7 @@ export interface Database {
           updated_at?: string | null
           company_name?: string | null
           website?: string | null
+          role?: string | null // Add role field here
         }
         Relationships: [
           {
@@ -91,3 +94,4 @@ export interface Database {
     }
   }
 }
+
