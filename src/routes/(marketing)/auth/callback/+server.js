@@ -1,27 +1,31 @@
-// src/routes/auth/callback/+server.js
-import { redirect } from "@sveltejs/kit"
-import { isAuthApiError } from "@supabase/supabase-js"
+// src/routes/(marketing)/auth/callback/+server.js
+import { redirect } from '@sveltejs/kit';
+import { isAuthApiError } from '@supabase/supabase-js';
+import supabase from '$lib/supabaseClient';
 
-export const GET = async ({ url, locals: { supabase } }) => {
-  const code = url.searchParams.get("code")
+export const GET = async ({ url, locals }) => {
+  const code = url.searchParams.get('code');
   if (code) {
     try {
-      await supabase.auth.exchangeCodeForSession(code)
+      await supabase.auth.exchangeCodeForSession(code);
     } catch (error) {
-      // If you open in another browser, need to redirect to login.
-      // Should not display error
       if (isAuthApiError(error)) {
-        throw redirect(303, "/login/sign_in?verified=true")
+        throw redirect(303, '/login/sign_in?verified=true');
       } else {
-        throw error
+        console.error('Unexpected error:', error);
+        throw redirect(303, '/error');
       }
     }
+  } else {
+    console.error('No code found in URL');
+    throw redirect(303, '/error');
   }
 
-  const next = url.searchParams.get("next")
+  const next = url.searchParams.get('next');
   if (next) {
-    throw redirect(303, next)
+    throw redirect(303, next);
   }
 
-  throw redirect(303, "/account")
-}
+  throw redirect(303, '/account');
+};
+

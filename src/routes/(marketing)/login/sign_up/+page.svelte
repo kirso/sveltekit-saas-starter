@@ -15,6 +15,7 @@
   }
 
   async function handleAuthEvent(event: CustomEvent<AuthEventDetail>) {
+    console.log(supabase)
     if (event.detail.event === 'SIGNED_IN') {
       const user = event.detail.session.user;
       const { error: updateError } = await supabase
